@@ -9,7 +9,7 @@ describe('Restful Booker API tests', () => {
     test('Create auth token', async () => {
         const res = await api
             .post('/auth')
-            .set('Content-Type', 'application/json')
+            .set('content-type', 'application/json')
             .set('Accept', 'application/json')
             .send({
                 username: 'admin',
@@ -17,7 +17,7 @@ describe('Restful Booker API tests', () => {
             });
 
         //Headers
-        expect(res.headers['Content-Type']).toMatch(/json/);
+        expect(res.headers['content-type']).toMatch(/json/);
         //Status
         expect(res.statusCode).toBe(200);
         //Body
@@ -25,68 +25,13 @@ describe('Restful Booker API tests', () => {
         token = res.body.token;
     });
 
-    //Create a booking
     test('Create booking', async () => {
         const res = await api
             .post('/booking')
-            .set('Content-Type', 'application/json')
+            .set('content-type', 'application/json')
             .set('Accept', 'application/json')
             .send({
                 firstname: "Jim",
-                lastname: "Brown",
-                totalprice: 111,
-                depositpaid: true,
-                bookingdates: {
-                    checkin: "2018-01-01",
-                    checkout: "2019-01-01"
-                },
-                additionalneeds: "Breakfast"
-            });
-
-        //Headers
-        expect(res.headers['Content-Type']).toMatch(/json/);
-        //Status
-        expect(res.statusCode).toBe(200);
-        //Body
-        expect(res.body).toHaveProperty('bookingid');
-        expect(res.body).toHaveProperty('booking');
-        expect(res.body.booking).toHaveProperty('firstname');
-        expect(res.body.booking).toHaveProperty('lastname');
-        expect(res.body.booking).toHaveProperty('totalprice');
-        expect(res.body.booking).toHaveProperty('depositpaid');
-        expect(res.body.booking).toHaveProperty('bookingdates');
-        expect(res.body.booking.bookingdates).toHaveProperty('checkin');
-        expect(res.body.booking.bookingdates).toHaveProperty('checkout');
-    });
-
-    //Get created booking by id
-    test('Get created booking by id', async () => {
-        const res = await api
-            .get(`/booking/${id}`)
-            .set('Accept', 'application/json');
-
-        //Headers
-        expect(res.headers['Content-Type']).toMatch(/json/);
-        //Status
-        expect(res.statusCode).toBe(200);
-        //Body
-        expect(res.body).toHaveProperty('firstname');
-        expect(res.body).toHaveProperty('lastname');
-        expect(res.body).toHaveProperty('totalprice');
-        expect(res.body).toHaveProperty('depositpaid');
-        expect(res.body).toHaveProperty('bookingdates');
-        expect(res.body.bookingdates).toHaveProperty('checkin');
-        expect(res.body.bookingdates).toHaveProperty('checkout');
-    });
-
-    test('Update booking', async () => {
-        const res = await api
-            .put(`/booking/${id}`)
-            .set('Content-Type', 'application/json')
-            .set('Accept', 'application/json')
-            .set('Cookie', `token=${token}`)
-            .send({
-                firstname: "James",
                 lastname: "Brown",
                 totalprice: 111,
                 depositpaid: true,
@@ -102,6 +47,59 @@ describe('Restful Booker API tests', () => {
         //Status
         expect(res.statusCode).toBe(200);
         //Body
+        expect(res.body).toHaveProperty('bookingid');
+        expect(res.body).toHaveProperty('booking');
+        expect(res.body.booking).toHaveProperty('firstname');
+        expect(res.body.booking).toHaveProperty('lastname');
+        expect(res.body.booking).toHaveProperty('totalprice');
+        expect(res.body.booking).toHaveProperty('depositpaid');
+        expect(res.body.booking).toHaveProperty('bookingdates');
+        expect(res.body.booking.bookingdates).toHaveProperty('checkin');
+        expect(res.body.booking.bookingdates).toHaveProperty('checkout');
+    });
+
+    test('Get created booking by id', async () => {
+        const res = await api
+            .get(`/booking/${id}`)
+            .set('Accept', 'application/json');
+
+        //Headers
+        expect(res.headers['content-type']).toMatch(/json/);
+        //Status
+        expect(res.statusCode).toBe(200);
+        //Body
+        expect(res.body).toHaveProperty('firstname');
+        expect(res.body).toHaveProperty('lastname');
+        expect(res.body).toHaveProperty('totalprice');
+        expect(res.body).toHaveProperty('depositpaid');
+        expect(res.body).toHaveProperty('bookingdates');
+        expect(res.body.bookingdates).toHaveProperty('checkin');
+        expect(res.body.bookingdates).toHaveProperty('checkout');
+    });
+
+    test('Update booking', async () => {
+        const res = await api
+            .put(`/booking/${id}`)
+            .set('content-type', 'application/json')
+            .set('Accept', 'application/json')
+            .set('Cookie', `token=${token}`)
+            .send({
+                firstname: "James",
+                lastname: "Brown",
+                totalprice: 111,
+                depositpaid: true,
+                bookingdates: {
+                    checkin: "2018-01-01",
+                    checkout: "2019-01-01"
+                },
+                additionalneeds: "Breakfast"
+            });
+
+        //Headers
+        expect(res.headers['content-type']).toMatch(/plain/);
+        //Status
+        expect(res.statusCode).toBe(200);
+        //Body
         expect(res.body).toHaveProperty('firstname');
         expect(res.body).toHaveProperty('lastname');
         expect(res.body).toHaveProperty('totalprice');
@@ -113,12 +111,14 @@ describe('Restful Booker API tests', () => {
     });
 
     test('Delete booking', async () => {
+        const res = await api
+            .delete(`/booking/${id}`)
+            .set('content-type', 'application/json')
+            .set("Cookie", `token=${token}`);
 
+        //Headers
+        expect(res.headers['content-type']).toMatch(/plain/);
+        //Status
+        expect(res.statusCode).toBe(201);
     });
-
-    test('Create auth token', async () => {
-
-    });
-
-
-})
+});
