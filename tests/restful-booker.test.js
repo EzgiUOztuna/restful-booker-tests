@@ -1,5 +1,5 @@
-const request = require('supertest');
-const api = request('https://restful-booker.herokuapp.com');
+const supertest = require('supertest');
+const api = supertest('https://restful-booker.herokuapp.com');
 
 describe('Restful Booker API tests', () => {
     let token;
@@ -49,6 +49,7 @@ describe('Restful Booker API tests', () => {
         //Body
         expect(res.body).toHaveProperty('bookingid');
         expect(res.body).toHaveProperty('booking');
+        id = res.body.bookingid;
         expect(res.body.booking).toHaveProperty('firstname');
         expect(res.body.booking).toHaveProperty('lastname');
         expect(res.body.booking).toHaveProperty('totalprice');
@@ -66,18 +67,15 @@ describe('Restful Booker API tests', () => {
         //Headers
         expect(res.headers['content-type']).toMatch(/json|plain/);
         //Status
-        expect([200, 404]).toContain(res.statusCode);
+        expect(res.statusCode).toBe(200);
         //Body
-        if (res.statusCode === 200) {
-            expect(res.body).toHaveProperty('firstname');
-            expect(res.body).toHaveProperty('lastname');
-            expect(res.body).toHaveProperty('totalprice');
-            expect(res.body).toHaveProperty('depositpaid');
-            expect(res.body).toHaveProperty('bookingdates');
-            expect(res.body.bookingdates).toHaveProperty('checkin');
-            expect(res.body.bookingdates).toHaveProperty('checkout');
-        }
-
+        expect(res.body).toHaveProperty('firstname');
+        expect(res.body).toHaveProperty('lastname');
+        expect(res.body).toHaveProperty('totalprice');
+        expect(res.body).toHaveProperty('depositpaid');
+        expect(res.body).toHaveProperty('bookingdates');
+        expect(res.body.bookingdates).toHaveProperty('checkin');
+        expect(res.body.bookingdates).toHaveProperty('checkout');
     });
 
     test('Update booking', async () => {
@@ -85,7 +83,7 @@ describe('Restful Booker API tests', () => {
             .put(`/booking/${id}`)
             .set('content-type', 'application/json')
             .set('accept', 'application/json')
-            .set('Authorization', `Bearer ${token}`)
+            .set('Cookie', `token=${token}`)
             .send({
                 firstname: "James",
                 lastname: "Brown",
@@ -99,31 +97,29 @@ describe('Restful Booker API tests', () => {
             });
 
         //Headers
-        expect(res.headers['content-type']).toMatch(/plain/);
+        expect(res.headers['content-type']).toMatch(/json/);
         //Status
-        expect([200, 403]).toContain(res.statusCode);
+        expect(res.statusCode).toBe(200);
         //Body
-        if (res.statusCode === 200) {
-            expect(res.body).toHaveProperty('firstname');
-            expect(res.body).toHaveProperty('lastname');
-            expect(res.body).toHaveProperty('totalprice');
-            expect(res.body).toHaveProperty('depositpaid');
-            expect(res.body).toHaveProperty('bookingdates');
-            expect(res.body.bookingdates).toHaveProperty('checkin');
-            expect(res.body.bookingdates).toHaveProperty('checkout');
-            expect(res.body).toHaveProperty('additionalneeds');
-        }
+        expect(res.body).toHaveProperty('firstname');
+        expect(res.body).toHaveProperty('lastname');
+        expect(res.body).toHaveProperty('totalprice');
+        expect(res.body).toHaveProperty('depositpaid');
+        expect(res.body).toHaveProperty('bookingdates');
+        expect(res.body.bookingdates).toHaveProperty('checkin');
+        expect(res.body.bookingdates).toHaveProperty('checkout');
+        expect(res.body).toHaveProperty('additionalneeds');
     });
 
     test('Delete booking', async () => {
         const res = await api
             .delete(`/booking/${id}`)
             .set('content-type', 'application/json')
-            .set('Authorization', `Bearer ${token}`);
+            .set('Cookie', `token=${token}`)
 
         //Headers
-        expect(res.headers['content-type']).toMatch(/plain|json/);
+        expect(res.headers['content-type']).toMatch(/plain/);
         //Status
-        expect([201, 403]).toContain(res.statusCode);
-    });
+        expect(res.statusCode).toBe(201);
+    })
 });
